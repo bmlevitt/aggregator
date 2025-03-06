@@ -1,30 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/bmlevitt/aggregator/internal/config"
 )
 
 func main() {
-	fmt.Println("Loading config file...")
-
 	cfg, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil {log.Fatalf("error reading config file: %v\n", err)}
 
-	err = cfg.SetUser("ben levitt")
-	if err != nil {
-		log.Fatal(err)
-	}
+	cliState := state{config: &cfg}
+	cmds := &commands{cmds: make(map[string]func(*state, command) error),}
+	cmds.register("login", handlerLogin)
+	args := os.Args
 
-	cfg, err = config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
+	if len(args) < 2 {log.Fatalf("Error: No command provided")} 
+	if len(args) < 3 {log.Fatalf("Error: no username provided")}
 
-	fmt.Printf("db url: %v | current user: %v\n", cfg.DBURL, cfg.CurrentUserName)
-
+	cmd := command{commandName: args[1], arguments: args[2:]}
+	cmds.run(&cliState, cmd)
 }
