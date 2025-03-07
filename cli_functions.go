@@ -8,7 +8,7 @@ import (
 func handlerLogin(s *state, cmd command) error {
 	// ensure username is provided
 	if len(cmd.arguments) == 0 {
-		return errors.New("error: command missing arguments")
+		return errors.New("error: missing username argument")
 	}
 
 	// update config file
@@ -29,8 +29,7 @@ func (c *commands) register(name string, f func(*state, command) error) {
 func (c *commands) run(s *state, cmd command) error {
 	fn, exists := c.cmds[cmd.commandName]
 	if !exists {
-		return fmt.Errorf("unknown command '%v'", cmd.commandName)
+		return fmt.Errorf("error: unknown command '%v'", cmd.commandName)
 	}
 	return fn(s, cmd)
 }
-

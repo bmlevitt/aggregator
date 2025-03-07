@@ -17,8 +17,10 @@ func main() {
 	args := os.Args
 
 	if len(args) < 2 {log.Fatalf("Error: No command provided")} 
-	if len(args) < 3 {log.Fatalf("Error: no username provided")}
 
 	cmd := command{commandName: args[1], arguments: args[2:]}
-	cmds.run(&cliState, cmd)
+	err = cmds.run(&cliState, cmd)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
 }
